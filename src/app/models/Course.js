@@ -5,7 +5,7 @@ mongoose.plugin(slug);
 
 const Course = new Schema(
   {
-    name: { type: String },
+    name: { type: String, minLength: 255 },
     description: { type: String, maxLength: 255 },
     image: { type: String },
     videoId: { type: String },

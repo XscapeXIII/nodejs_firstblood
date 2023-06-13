@@ -1,5 +1,6 @@
 const Course = require("../models/Course");
 const { mongooseToObject } = require("../../util/mongoose");
+const { redirect } = require("express/lib/response");
 
 class CourseController {
   //GET /course/:slug
@@ -27,6 +28,29 @@ class CourseController {
       .catch((error) => {});
 
     res.send("ADD SUCCESS");
+  }
+
+  //GET /course/:id/edit
+  edit(req, res, next) {
+    Course.findById(req.params.id)
+      .then((course) =>
+        res.render("courses/edit", { course: mongooseToObject(course) })
+      )
+      .catch(next);
+  }
+
+  //PUT /course/:id
+  update(req, res, next) {
+    Course.updateOne({ _id: req.params.id }, req.body)
+      .then(() => res.redirect("/me/stored/courses"))
+      .catch(next);
+  }
+
+  //DELETE /course/:id
+  delete(req, res, next) {
+    Course.deleteOne({ _id: req.params.id })
+      .then(() => res.redirect("back"))
+      .catch(next);
   }
 }
 
