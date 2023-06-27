@@ -1,7 +1,7 @@
 <div class="mt-4">
   <div>
-    <h3>My Products</h3>
-    <a href="/me/trash/courses">Deleted Products</a>
+    <h3>Deleted Products</h3>
+    <a href="/me/stored/courses">Back to Stored</a>
   </div>
   <table class="table mt-4">
     <thead>
@@ -21,21 +21,25 @@
           <td>{{this.description}}</td>
           <td>{{this.createdAt}}</td>
           <td>
-            <a href="/courses/{{this._id}}/edit" class="btn btn-link">Update</a>
+            <a
+              href=""
+              class="btn btn-link btn-restore"
+              data-id="{{this._id}}"
+            >Restore</a>
             <a
               href=""
               class="btn btn-link"
               data-bs-toggle="modal"
               data-bs-target="#delete-modal"
               data-id="{{this._id}}"
-            >Delete</a>
+            >Force Delete</a>
           </td>
         </tr>
       {{else}}
         <tr>
           <td colspan="5" class="text-center">
-            You have not added a product yet !
-            <a href="/courses/create">Add Products</a>
+            Empty.
+            <a href="/me/stored/courses">Products List</a>
           </td>
         </tr>
       {{/each}}
@@ -82,16 +86,23 @@
   </div>
 </div>
 
-{{! Delete hidden Form }}
 <form name="delete-form" method="POST"></form>
+<form name="restore-form" method="POST"></form>
 
+<script
+  src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"
+></script>
 <script>
-  const exampleModal = document.getElementById('delete-modal'); let productId;
-  let deleteForm = document.forms['delete-form']; const btnDeleteProduct =
-  document.getElementById("btn-delete-product"); if(exampleModal) {
-  exampleModal.addEventListener('show.bs.modal', event => { const button =
-  event.relatedTarget; productId = button.getAttribute('data-id');
-  console.log(productId); }) }; btnDeleteProduct.onclick = function() {
-  deleteForm.action = '/courses/' + productId + '/?_method=DELETE';
-  deleteForm.submit(); }
+  document.addEventListener('DOMContentLoaded', function() { var productId; var
+  deleteForm = document.forms['delete-form']; var restoreForm =
+  document.forms['restore-form']; var btnDeleteProduct =
+  document.getElementById('btn-delete-product'); var restoreBtn =
+  $('.btn-restore'); $('delete-modal').on('show.bs.modal', function(event) { var
+  button = $(event.relatedTarget); productId = button.data('id'); });
+  btnDeleteProduct.onclick = function() { deleteForm.action = '/courses/' +
+  productId + '/force?_method=DELETE'; deleteForm.submit(); };
+  restoreBtn.click(function(e) { e.preventDefault(); var productId =
+  $(this).data('id'); restoreForm.action = '/courses/' + productId +
+  '/restore?_method=PATCH'; restoreForm.submit(); }) } )
+
 </script>
